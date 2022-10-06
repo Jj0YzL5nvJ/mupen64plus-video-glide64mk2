@@ -38,6 +38,7 @@
 #include "g3ext.h"
 #include "glitchmain.h"
 #include "m64p.h"
+#include <deque>
 
 #ifdef VPDEBUG
 #include <IL/il.h>
