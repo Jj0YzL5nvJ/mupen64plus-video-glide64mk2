@@ -32,29 +32,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Get build dependencies and arrange the environment
         run: |
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-          git clone --depth 1 -b ci-rearr --single-branch https://github.com/Jj0YzL5nvJ/mupen64plus-core.git ../mupen64plus-core
+          git clone --depth 1 -b get-info --single-branch https://github.com/Jj0YzL5nvJ/mupen64plus-core.git ../mupen64plus-core
           export BUILD_DEPS="libgl1-mesa-dev libpng-dev libsdl1.2-dev libsdl2-dev zlib1g-dev"
           # Old Boost i386 hotfix...
           # export HOTFIX_I386="libgomp1:i386 libitm1:i386 libquadmath0:i386 libubsan1:i386"
           ./../mupen64plus-core/.github/workflows/scripts/ci_install_ubuntu_deps.sh ${{ matrix.arch }} ${{ matrix.cc }}
-          echo ":: INFO GCC ::"
-          echo ""
-          apt list gcc-1*
-          echo ""
-          cd /usr
-          find * | grep -i 'gcc'
-          echo ""
-          ls -gG /usr/bin/*gcc*
-          echo ""
-          echo ":: INFO Clang ::"
-          echo ""
-          apt list clang-1*
-          echo ""
-          cd /usr
-          find * | grep -i 'clang'
-          echo ""
-          ls -gG /usr/bin/*clang*
       - name: Build and related stuff, backup binaries
         run: |
           export PATH="$(pwd)/../mupen64plus-core/.github/workflows/scripts:${PATH}"
@@ -107,10 +89,9 @@ jobs:
             mingw-w64-${{ matrix.cross }}-zlib
       - name: Build and related stuff, backup binaries
         run: |
-          git clone --depth 1 -b ci-rearr --single-branch https://github.com/Jj0YzL5nvJ/mupen64plus-core.git ../mupen64plus-core
-          export PATH="$(pwd)/../mupen64plus-core/.github/workflows/scripts:${PATH}"
+          git clone --depth 1 -b get-info --single-branch https://github.com/Jj0YzL5nvJ/mupen64plus-core.git ../mupen64plus-core
           export OPTFLAGS="-O2 -flto -msse2"
-          ci_build.sh ${{ matrix.arch }} ${{ matrix.cc }}
+          ./../mupen64plus-core/.github/workflows/scripts/ci_build.sh ${{ matrix.arch }} ${{ matrix.cc }}
       - name: Backup dependencies, etc...
         run: |
           ./../mupen64plus-core/.github/workflows/scripts/ci_backup_mingw_deps.sh ${{ matrix.env }}
@@ -141,7 +122,7 @@ jobs:
       - uses: microsoft/setup-msbuild@v2
       - name: Build and related stuff, backup binaries
         run: |
-          git clone --depth 1 -b ci-rearr --single-branch https://github.com/Jj0YzL5nvJ/mupen64plus-core.git ..\mupen64plus-core
+          git clone --depth 1 -b get-info --single-branch https://github.com/Jj0YzL5nvJ/mupen64plus-core.git ..\mupen64plus-core
           set TOOLSET=${{ matrix.toolset }}
           .\..\mupen64plus-core\.github\workflows\scripts\ci_msvc_build.cmd ${{ matrix.arch }}
       - name: Backup dependencies, etc...
@@ -165,12 +146,12 @@ jobs:
           path: binaries
       - name: Get some tools
         run: |
-          git clone --depth 1 -b ci-rearr --single-branch https://github.com/Jj0YzL5nvJ/mupen64plus-core.git ../mupen64plus-core
+          git clone --depth 1 -b get-info --single-branch https://github.com/Jj0YzL5nvJ/mupen64plus-core.git ../mupen64plus-core
           sudo apt-get update
           sudo apt-get -y install hashdeep
       - name: Creating new artifacts and update nightly-build
         run: |
-          .\..\mupen64plus-core\.github\workflows\scripts\ci_nightly_artifacts.sh
+          ./../mupen64plus-core/.github/workflows/scripts/ci_nightly_artifacts.sh
       - name: Nightly-build
         uses: ncipollo/release-action@v1
         with:
