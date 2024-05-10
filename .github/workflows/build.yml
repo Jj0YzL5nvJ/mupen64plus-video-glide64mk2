@@ -27,16 +27,34 @@ jobs:
           - cc: Clang
             arch: x86
     name: Linux / ${{ matrix.cc }} / ${{ matrix.arch }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Get build dependencies and arrange the environment
         run: |
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           git clone --depth 1 -b ci-rearr --single-branch https://github.com/Jj0YzL5nvJ/mupen64plus-core.git ../mupen64plus-core
           export BUILD_DEPS="libgl1-mesa-dev libpng-dev libsdl1.2-dev libsdl2-dev zlib1g-dev"
           # Old Boost i386 hotfix...
           # export HOTFIX_I386="libgomp1:i386 libitm1:i386 libquadmath0:i386 libubsan1:i386"
           ./../mupen64plus-core/.github/workflows/scripts/ci_install_ubuntu_deps.sh ${{ matrix.arch }} ${{ matrix.cc }}
+          echo ":: INFO GCC ::"
+          echo ""
+          apt list gcc-1*
+          echo ""
+          cd /usr
+          find * | grep -i 'gcc'
+          echo ""
+          ls -gG /usr/bin/*gcc*
+          echo ""
+          echo ":: INFO Clang ::"
+          echo ""
+          apt list clang-1*
+          echo ""
+          cd /usr
+          find * | grep -i 'clang'
+          echo ""
+          ls -gG /usr/bin/*clang*
       - name: Build and related stuff, backup binaries
         run: |
           export PATH="$(pwd)/../mupen64plus-core/.github/workflows/scripts:${PATH}"
@@ -95,7 +113,7 @@ jobs:
           ci_build.sh ${{ matrix.arch }} ${{ matrix.cc }}
       - name: Backup dependencies, etc...
         run: |
-          ./.github/workflows/scripts/ci_backup_mingw_deps.sh ${{ matrix.env }}
+          ./../mupen64plus-core/.github/workflows/scripts/ci_backup_mingw_deps.sh ${{ matrix.env }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
