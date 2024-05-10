@@ -34,17 +34,19 @@ jobs:
         run: |
           git clone --depth 1 -b get-info --single-branch https://github.com/Jj0YzL5nvJ/mupen64plus-core.git ../mupen64plus-core
           export BUILD_DEPS="libgl1-mesa-dev libpng-dev libsdl1.2-dev libsdl2-dev zlib1g-dev"
+          export C_CLANG_VER="-15" C_GCC_VER="-13"
           # Old Boost i386 hotfix...
           # export HOTFIX_I386="libgomp1:i386 libitm1:i386 libquadmath0:i386 libubsan1:i386"
-          ./../mupen64plus-core/.github/workflows/scripts/ci_install_ubuntu_deps.sh ${{ matrix.arch }} ${{ matrix.cc }}
+          ./../mupen64plus-core/.github/workflows/scripts/ci_install_ubuntu_deps.sh ${{ matrix.arch }} ${{ matrix.cc }} multilib
       - name: Build and related stuff, backup binaries
         run: |
+          export C_CLANG_VER="-15" C_GCC_VER="-13"
           export PATH="$(pwd)/../mupen64plus-core/.github/workflows/scripts:${PATH}"
           export OPTFLAGS="-O2 -flto -msse2"
           export CONFIG_OVERRIDE="SDL_CONFIG=\"sdl-config\""
-          ci_build.sh ${{ matrix.arch }} ${{ matrix.cc }}
+          ci_build.sh ${{ matrix.arch }} ${{ matrix.cc }} multilib
           export CONFIG_OVERRIDE="SDL_CONFIG=\"sdl2-config\""
-          ci_build.sh ${{ matrix.arch }} ${{ matrix.cc }} makepkg
+          ci_build.sh ${{ matrix.arch }} ${{ matrix.cc }} makepkg multilib
       - name: Upload artifact
         if: matrix.cc == 'GCC'
         uses: actions/upload-artifact@v4
