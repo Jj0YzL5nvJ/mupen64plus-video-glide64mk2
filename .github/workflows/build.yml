@@ -39,6 +39,7 @@ jobs:
       - name: Build and related stuff, backup binaries
         run: |
           export C_CLANG_SUFFIX="-15" C_GCC_SUFFIX="-12"
+          export OPTFLAGS="-O2 -flto -msse2"
           ./../mupen64plus-core/.github/workflows/scripts/ci_build.sh ${{ matrix.arch }} ${{ matrix.cc }} makepkg
       - name: Upload artifact
         if: matrix.cc == 'GCC'
@@ -85,6 +86,7 @@ jobs:
       - name: Build and related stuff, backup binaries
         run: |
           git clone --depth 1 -b ci-rearr --single-branch https://github.com/Jj0YzL5nvJ/mupen64plus-core.git ../mupen64plus-core
+          export OPTFLAGS="-O2 -flto -msse2"
           ./../mupen64plus-core/.github/workflows/scripts/ci_build.sh ${{ matrix.arch }} ${{ matrix.cc }}
       - name: Backup dependencies, etc...
         run: |
